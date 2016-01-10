@@ -1,0 +1,398 @@
+@charset "utf-8";
+/*常用class 用于.resetless.less*/
+/*常用css*/
+.fl {
+  float: left;
+  _display: inline;
+}
+.fr {
+  float: right;
+  _display: inline;
+}
+/*常用字体*/
+.yh {
+  font-family: 'Microsoft YaHei';
+}
+.st {
+  font-family: 'SimSun';
+}
+.ar {
+  font-family: 'Arial';
+}
+.tn {
+  display: block;
+  font-size: 0;
+  text-indent: -99999em;
+  color: transparent;
+}
+.tt a:hover {
+  text-decoration: underline;
+}
+.xie {
+  font-style: italic;
+}
+a {
+  color: #666;
+}
+a:hover {
+  text-decoration: none;
+}
+body {
+  font-size: 12px;
+  color: #666;
+  position: relative;
+  line-height: 24px;
+  min-width: 1000px;
+  font-family: 'Microsoft YaHei';
+  background-color: #E6E6E6;
+}
+.l {
+  color: #6b0018 !important;
+}
+.w {
+  width: 1000px;
+  min-width: 1000px;
+  margin: 0 auto;
+}
+.topBar {
+  height: 35px;
+  line-height: 35px;
+  font-size: 12px;
+  color: #fff;
+  background: #F5A925;
+}
+.topBar a {
+  color: #fff;
+}
+.topBar a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.header {
+  height: 120px;
+  background-color: #fff;
+}
+.header .txt {
+  width: 705px;
+  height: 120px;
+  position: absolute;
+  right: -140px;
+  z-index: 1;
+  top: 0;
+  background: url("../images/705x120.jpg") no-repeat;
+}
+.header .ma {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 2;
+  width: 86px;
+  font-size: 12px;
+  color: #808080;
+  text-align: center;
+}
+.logo {
+  width: 220px;
+  height: 120px;
+  text-indent: -9999px;
+  background: url("../images/logo_sy.png") center no-repeat;
+}
+.searchBar {
+  position: relative;
+  z-index: 101;
+  height: 70px;
+  background-color: #F5A925;
+  color: #fff;
+  font-size: 24px;
+  line-height: 70px;
+}
+.searchBar .inputBox {
+  width: 596px;
+  height: 44px;
+  background-color: #fff;
+  border: 2px solid #81BA3E;
+  margin-top: 11px;
+}
+.searchBar .area {
+  width: 130px;
+  position: relative;
+  z-index: 100;
+  height: 44px;
+  border-right: 2px solid #D2D2D2;
+  background: url("../images/sjx.png") 105px center no-repeat;
+}
+.searchBar .area h3 {
+  line-height: 44px;
+  color: #969696;
+  font-size: 16px;
+}
+.searchBar .area h3 strong {
+  font-weight: normal;
+  color: #515151;
+  padding: 0 7px 0 10px;
+}
+.searchBar input.txt {
+  width: 420px;
+  height: 44px;
+  line-height: 44px;
+  color: #969696;
+  padding: 0 15px;
+  font-size: 16px;
+}
+.searchBar .submit {
+  width: 120px;
+  height: 48px;
+  cursor: pointer;
+  margin-top: 11px;
+  background: url("../images/so.jpg") no-repeat;
+}
+.areaAll {
+  width: 800px;
+  position: absolute;
+  left: -2px;
+  top: 45px;
+  display: none;
+  background-color: #fff;
+  border: 1px solid #DDDDDD;
+}
+.areaAll .inner {
+  padding: 0  30px 30px;
+}
+.areaAll h4 {
+  font-size: 24px;
+  color: #B4B3B5;
+  line-height: 60px;
+}
+.areaAll p {
+  line-height: 40px;
+}
+.areaAll p a {
+  font-size: 22px;
+  display: inline-block;
+  white-space: nowrap;
+  color: #363636;
+  padding-right: 10px;
+}
+.areaAll a:hover {
+  color: #F5A925;
+}
+.areaAll .sc {
+  border-bottom: 2px solid #E5E5E5;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.areaAll .other p {
+  padding-left: 75px;
+  position: relative;
+  padding-bottom: 10px;
+}
+.areaAll .other p span.t {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #999999;
+  font-size: 20px;
+  font-weight: bold;
+}
+.tianqi {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+.tianqi a {
+  color: #fff;
+}
+.tianqi img {
+  margin: 0 15px;
+  vertical-align: middle;
+}
+.banner {
+  position: relative;
+  height: 400px;
+  z-index: 1;
+}
+.banner .bd {
+  height: 400px;
+  overflow: hidden;
+}
+.banner .bd a {
+  display: block;
+  height: 400px;
+}
+.banner .hd {
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: 8px;
+}
+.banner .hd ul {
+  float: right;
+  padding-right: 10px;
+}
+.banner .hd li {
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
+  color: #B8B5B2;
+  float: left;
+  margin-right: 2px;
+  line-height: 20px;
+  text-align: center;
+  background: url("../images/tm4.png");
+}
+.banner .hd li.on {
+  background: 0;
+  background-color: #fff;
+  color: #737372;
+}
+.banner .btn {
+  display: block;
+  width: 34px;
+  height: 56px;
+  position: absolute;
+  top: 192px;
+  z-index: 6;
+  background: url("../images/arrleft.png") no-repeat;
+}
+.banner .prev {
+  left: 30px;
+}
+.banner .next {
+  background-image: url(../images/arrright.png);
+  right: 30px;
+}
+.main {
+  padding-bottom: 20px;
+  background: url("../images/mainbg.jpg") repeat-y;
+}
+.listMain {
+  padding: 30px 0 0 30px;
+  color: #787878;
+}
+.listMain li {
+  float: left;
+  padding-right: 20px;
+  padding-bottom: 20px;
+}
+.listMain .box {
+  width: 290px;
+  height: 170px;
+  text-align: right;
+  padding: 5px;
+  position: relative;
+  background: #fff;
+}
+.listMain .img {
+  display: block;
+  width: 216px;
+  height: 170px;
+  position: absolute;
+  left: 5px;
+  right: 0;
+}
+.listMain h4 {
+  color: #787878;
+  font-size: 12px;
+  padding-top: 5px;
+}
+.listMain .row1 {
+  height: 55px;
+  background-color: #99C762;
+}
+.listMain .row2 {
+  height: 60px;
+}
+.listMain .row3 {
+  height: 55px;
+  padding-right: 5px;
+  background: #FFF9AD;
+}
+.listMain .stars {
+  padding-left: 219px;
+}
+.listMain .stars img {
+  float: left;
+}
+.listMain .name {
+  width: 141px;
+  height: 30px;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  z-index: 6;
+  font-size: 16px;
+  line-height: 30px;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  background: url("../images/tm4.png");
+}
+.page {
+  text-align: center;
+  height: 35px;
+  line-height: 35px;
+  color: #fff;
+  background-color: #6B9B38;
+  margin: 0 30px;
+}
+.page a {
+  color: #fff;
+  padding: 0 5px;
+}
+.page a.on,
+.page a:hover {
+  color: #F5A925;
+}
+.page select {
+  margin: 0 5px;
+}
+.footer {
+  background-color: #F5A925;
+}
+.footer .w {
+  height: 70px;
+  color: #fff;
+  line-height: 70px;
+  text-align: center;
+  font-size: 14px;
+}
+.footer a {
+  color: #fff;
+}
+.footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.smallPics {
+  height: 0;
+  line-height: 0;
+}
+.smallPics span {
+  display: inline-block;
+  position: absolute;
+  z-index: 10;
+}
+.smallPics .leftTop {
+  top: 500px;
+  right: 50%;
+  margin-right: 505px;
+}
+.smallPics .rightTop {
+  top: 498px;
+  left: 50%;
+  margin-left: 505px;
+}
+.smallPics .leftBtm {
+  bottom: 80px;
+  right: 50%;
+  margin-right: 505px;
+}
+.smallPics .rightBtm {
+  bottom: 80px;
+  left: 50%;
+  margin-left: 505px;
+}

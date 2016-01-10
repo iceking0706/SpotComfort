@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+	http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- 装载/WEB-INF/spring/下的所有 properties 配置文件 -->
+	<context:property-placeholder
+		location="/WEB-INF/spring/*.properties" />
+
+	<!-- 配置数据源，使用c3p0连接池 -->  
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">  
+        <property name="driverClass">  
+            <value>${database.driverClassName}</value>  
+        </property>  
+        <property name="jdbcUrl"> 
+            <value>jdbc:mysql://${mysql5.ip}:${mysql5.port}/${mysql5.dbname}?useUnicode=true&amp;characterEncoding=utf8&amp;reConnect=true</value>  
+        </property>  
+        <property name="user">  
+            <value>${database.username}</value>  
+        </property>  
+        <property name="password">  
+            <value>${database.password}</value>  
+        </property>  
+        <property name="initialPoolSize">  
+            <value>5</value>  
+        </property>  
+        <property name="minPoolSize">  
+            <value>1</value>  
+        </property>  
+        <property name="maxPoolSize">  
+            <value>200</value>  
+        </property>
+        <property name="acquireIncrement">  
+            <value>3</value>
+        </property>
+        <property name="maxStatementsPerConnection">  
+            <value>50</value>
+        </property>
+        <property name="maxStatements">  
+            <value>100</value>
+        </property>
+        <property name="idleConnectionTestPeriod">  
+            <value>600</value>
+        </property>
+        <property name="maxIdleTime">
+            <value>1800</value>
+        </property>
+        <property name="preferredTestQuery">
+            <value>select 1</value>
+        </property>
+        <property name="testConnectionOnCheckout">
+            <value>false</value>
+        </property>
+        <property name="breakAfterAcquireFailure">
+        	<value>true</value>
+        </property>
+    </bean>
+
+	<bean
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		id="entityManagerFactory">
+		<property name="packagesToScan"
+			value="com.xie.spot.entity" />
+		<property name="persistenceUnitName" value="spotcomfort" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter">
+			<bean
+				class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform"
+					value="org.hibernate.dialect.MySQL5Dialect">
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<jpa:repositories base-package="com.xie.spot.repository" />
+
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="transactionManager">
+		<property name="entityManagerFactory"
+			ref="entityManagerFactory" />
+	</bean>
+	
+</beans>
