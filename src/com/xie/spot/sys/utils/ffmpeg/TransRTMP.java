@@ -167,7 +167,7 @@ public class TransRTMP extends Thread {
 		return cmd;
 	}
 
-	public boolean isInTrans() {
+	public boolean isTransing() {
 		return start && frameCount > 3;
 	}
 	
@@ -188,7 +188,7 @@ public class TransRTMP extends Thread {
 		long startTime = System.currentTimeMillis();
 		sleepIt(1000);
 		while(System.currentTimeMillis()-startTime <= curTimeout){
-			if(isInTrans())
+			if(isTransing())
 				return true;
 			sleepIt(1000);
 		}

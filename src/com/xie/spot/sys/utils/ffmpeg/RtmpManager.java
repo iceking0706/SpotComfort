@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.istack.FinalArrayList;
+
 
 /**
  * 多路直播对象的管理
@@ -61,6 +63,13 @@ public class RtmpManager {
 	private final String blockObj = "RtmpManagerWaitObject";
 	
 	/**
+	 * 检查是否有ffmpeg启动着，kill 进程
+	 */
+	private void checkAndKillFfmpegExe(){
+		threadPool.execute(new KillFfmpeg());
+	}
+	
+	/**
 	 * 初始化
 	 */
 	private void init(){
@@ -72,7 +81,9 @@ public class RtmpManager {
 				ckStop = false;
 				while(!ckStop){
 					if(mapLive.isEmpty()){
-						logger.info("Map is empty, sleep...");
+						logger.info("MapLive is empty, timeout checker sleep...");
+						//睡眠之前，去检查一下是否有 ffmpeg 的进程启动着
+						checkAndKillFfmpegExe();
 						waitTimeoutChecker();
 						continue;
 					}
@@ -147,7 +158,7 @@ public class RtmpManager {
 	 * @param inputRTSP
 	 * @return
 	 */
-	public String runRTSP(String uuid,String inputRTSP){
+	public String runRTSP(final String uuid,String inputRTSP){
 		if(ffmpegExe==null || !ffmpegExe.exists())
 			return null;
 		
@@ -163,12 +174,13 @@ public class RtmpManager {
 			
 			@Override
 			public void doOneline(String line) {
-				logger.info("Return from ffmpeg-> "+line);
+				logger.info("ffmpeg->["+uuid+"] "+line);
 			}
 		});
 		threadPool.execute(transRTMP);
 		
-		if(transRTMP.isInTrans(8000)){
+		//3G路由器中的连接时间比较长，设置为30秒
+		if(transRTMP.isInTrans(30000)){
 			//如果正在直播中了，那么就加入到map，否则返回null
 			mapLive.put(uuid, transRTMP);
 			logger.info("Add new livestream: "+transRTMP.getRed5LiveStreamUrl()+". MapSize="+mapLive.size());
@@ -237,6 +249,10 @@ public class RtmpManager {
 
 	public void setFfmpegExe(File ffmpegExe) {
 		this.ffmpegExe = ffmpegExe;
+	}
+
+	public ExecutorService getThreadPool() {
+		return threadPool;
 	}
 	
 	

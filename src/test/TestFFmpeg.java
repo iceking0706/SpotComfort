@@ -10,6 +10,8 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.xie.spot.sys.utils.ffmpeg.KillFfmpeg;
+import com.xie.spot.sys.utils.ffmpeg.LiveStreamUser;
 import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
 import com.xie.spot.sys.utils.ffmpeg.ShowLineInfo;
 import com.xie.spot.sys.utils.ffmpeg.TransRTMP;
@@ -135,6 +137,6 @@ public class TestFFmpeg {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		RtmpManager.getInstance();
+		System.out.println(LiveStreamUser.isUserValid("pfcounter", "pfcounter123456"));
 	}
 }

@@ -43,6 +43,7 @@ import com.xie.spot.sys.Utils;
 import com.xie.spot.sys.utils.JsonResult;
 import com.xie.spot.sys.utils.PageData;
 import com.xie.spot.sys.utils.PageParam;
+import com.xie.spot.sys.utils.ffmpeg.LiveStreamUser;
 import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
 
 /**
@@ -1083,6 +1084,15 @@ public class CameraController {
 	@ResponseBody
 	@Transactional
 	public String livestream(HttpServletRequest request, String sn,String oper) {
+		//调用视频，必须要指定用户名和密码
+		User loginUser = (User) request.getSession().getAttribute("loginUser");
+		if (loginUser == null) {
+			//当缺少登入信息的时候，必须判断指定的用户名
+			if(!LiveStreamUser.isUserValid(request.getParameter("username"), request.getParameter("password"))){
+				return new JsonResult(false, "No auth info").toString();
+			}
+		}
+		
 		if (Utils.isEmpty(sn)) {
 			return new JsonResult(false, "No parameter sn").toString();
 		}
