@@ -19,7 +19,7 @@ public class HvDeviceDLL {
 	/**
 	 * dll所在的位置，jre\bin下面
 	 */
-	public static final String JRE_BIN_DIR = System.getProperty("java.home")
+	public static final String JRE_BIN_DIR = System.getProperty("java.home").replace('\\', '/')
 			+ "/bin";
 	
 	/**

@@ -27,7 +27,14 @@ body {
 	<video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="480" height="320"
       poster="easyui/video-js-4.12.7/bgsd1.jpg"
       data-setup="{}">
-	<source src="rtmp://120.26.108.57/live/s11" type='rtmp/mp4' />
+	<source src="rtmp://127.0.0.1:1935/suyou/aa-bb-cc" type='rtmp/mp4' />
   </video>
+  
+  <script type="text/javascript">
+	  videojs("example_video_1").ready(function(){
+	      var myPlayer = this;
+	      myPlayer.play();
+	  });
+  </script>
 </body>
 </html>

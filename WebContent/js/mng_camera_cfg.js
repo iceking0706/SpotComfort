@@ -98,6 +98,34 @@ var fnTakepicture = function(){
 	
 };
 
+//实时视频直播
+var fnLiveStream = function(){
+	var selRowData = $('#dg1').datagrid('getSelected');
+	if(selRowData == null){
+		$.messager.alert('Information','请选择要获取数据的摄像机设备');
+		return;
+	}
+	/*if(selRowData.online != 1){
+		$.messager.alert('Information','设备未联机. SN='+selRowData.sn+', IP='+selRowData.ip);
+		return;
+	}*/
+	$.messager.confirm('Confirm','确实要直播相机视频吗？SN='+selRowData.sn,function(r){
+		if(!r)
+			return;
+		$.messager.progress({msg:'正在建立直播连接...'});
+		$.post('cmr/livestream',{sn:selRowData.sn,oper:'start'},function(data){
+			$.messager.progress('close');
+			if(data.succ){
+				//alert(data.rtmpurl+' , '+data.pic);
+				//直接弹出一个播放视频的小窗口
+				var pageurl = 'mng_camera_livestream.jsp?sn='+data.sn+'&rtmpurl='+data.rtmpurl+'&picurl='+data.pic;
+				window.open(pageurl,'','height=600,width=1000,top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no, alwaysRaised=yes');
+			}else
+				$.messager.alert('Information','失败：'+data.stmt);
+		});
+	});
+};
+
 //主动去触发的联机检测
 var fnUpdateOnline = function(){
 	$.messager.confirm('Confirm','确实要检测相机的联机状态吗？',function(r){
@@ -253,6 +281,9 @@ var fnDownOper = function(){
 		break;
 	case 5: //触发相机拍照，和蒋涛的接口一样
 		fnTakepicture();
+		break;
+	case 6: //建立实时直播流
+		fnLiveStream();
 		break;
 	}
 };

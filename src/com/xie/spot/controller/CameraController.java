@@ -43,6 +43,7 @@ import com.xie.spot.sys.Utils;
 import com.xie.spot.sys.utils.JsonResult;
 import com.xie.spot.sys.utils.PageData;
 import com.xie.spot.sys.utils.PageParam;
+import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
 
 /**
  * 和摄像头设备相关的操作
@@ -1070,5 +1071,65 @@ public class CameraController {
 		
 		return cameraManager.takeAPictureManually(po);
 
+	}
+	
+	/**
+	 * 视频直播流
+	 * @param request
+	 * @param sn
+	 * @return
+	 */
+	@RequestMapping(value = "/cmr/livestream", produces = "application/json;charset=utf-8")
+	@ResponseBody
+	@Transactional
+	public String livestream(HttpServletRequest request, String sn,String oper) {
+		if (Utils.isEmpty(sn)) {
+			return new JsonResult(false, "No parameter sn").toString();
+		}
+		boolean blStart = (oper!=null && oper.equals("start"));
+		
+		//知道相机配置对象，获得运行状态
+		CameraCfg cameraCfg = cameraCfgRepository.findBySn(sn);
+		if(cameraCfg == null){
+			return new JsonResult(false, "No CameraCfg found by sn: "+sn).toString();
+		}
+		//相机必须是联机的
+		if(!cameraCfg.isCmrOnline()){
+			return new JsonResult(false, "Camera not online. sn: "+sn).toString();
+		}
+		
+		if(blStart){
+			//启动直播流
+			//根据当前的ip和端口组织 rtsp url
+			String rtsp = "rtsp://"+cameraCfg.getIp()+":554/h264ESVideoTest";
+			//调用ffmeg启动直播流
+			String rtmp = RtmpManager.getInstance().runRTSP(sn, rtsp);
+			if(rtmp == null){
+				return new JsonResult(false, "Camera not establish livestram from: "+rtsp).toString();
+			}
+			
+			//直播成功后，获得最新的一张图片，作为初始化的图片
+			JsonResult jsonResult = new JsonResult(true);
+			jsonResult.put("sn", sn);
+			jsonResult.put("rtmpurl", rtmp);
+			
+			CameraData data = cameraDataRepository.getLatestPic(sn);
+			if(data == null){
+				return jsonResult.toString();
+			}
+			
+			String picOri = data.getPicUrl();
+			//原始图片
+			jsonResult.put("pic", picOri);
+			
+			
+			return jsonResult.toString();
+		}else {
+			//关闭直播流
+			RtmpManager.getInstance().stop(sn);
+			return new JsonResult(true).toString();
+		}
+		
+		
 	}
 }

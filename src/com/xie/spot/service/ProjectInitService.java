@@ -1,5 +1,6 @@
 package com.xie.spot.service;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import com.xie.spot.sys.CameraManager;
 import com.xie.spot.sys.FetchWeatherOperator;
+import com.xie.spot.sys.Utils;
 import com.xie.spot.sys.VersionInfo;
+import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
+import com.xie.spot.sys.utils.ffmpeg.TransRTMP;
 
 
 /**
@@ -55,13 +59,20 @@ public class ProjectInitService implements ApplicationListener<ApplicationEvent>
 //			}
 //		}, 5000, 1800000);
 		
-		//cameraManager.start();
+		cameraManager.start();
+		
+		//直播流管理对象的启动
+		TransRTMP.setRed5Ip("120.26.108.57");
+		RtmpManager.getInstance().setFfmpegExe(new File(Utils.getMysqlBackupDir(),"tools/ffmpeg.exe"));
 	}
 	
 	private void destroy(){
 //		if(timerWeather != null)
 //			timerWeather.cancel();
-		//cameraManager.stop();
+		
+		RtmpManager.getInstance().unInit();
+		
+		cameraManager.stop();
 		logger.info("=================Project SpotComfort destroy oper=========================");
 	}
 

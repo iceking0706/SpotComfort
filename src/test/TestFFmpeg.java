@@ -10,6 +10,8 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
+import com.xie.spot.sys.utils.ffmpeg.ShowLineInfo;
 import com.xie.spot.sys.utils.ffmpeg.TransRTMP;
 
 public class TestFFmpeg {
@@ -95,23 +97,32 @@ public class TestFFmpeg {
         }  
     }  
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void test21(){
 		//test1();
 		
 		//Thread.sleep(10000);
 		
 		//p1.destroy();
 		
-		File ffmpeg = new File("E:\\MyTmps\\ffmpeg.exe");
-		String inputRTSP = "rtsp://192.168.9.101/h264ESVideoTest";
-		String outputRTMP = "s11";
+		File ffmpeg = new File("C:\\JavaProgram\\ffmpeg\\ffmpeg.exe");
+		//String inputRTSP = "rtsp://192.168.9.101/h264ESVideoTest";
+		String inputRTSP = "C:\\JavaProgram\\ffmpeg\\kldj.mp4";
+		String outputRTMP = "aa-bb-cc";
 		TransRTMP transRTMP = new TransRTMP(ffmpeg, inputRTSP, outputRTMP);
+		transRTMP.setMp4File(true);
+		transRTMP.setShowLineInfo(new ShowLineInfo() {
+			
+			@Override
+			public void doOneline(String line) {
+				System.out.println(line);
+			}
+		});
 		transRTMP.startIt();
 		
 		if(transRTMP.isInTrans(0)){
 			System.out.println("已经开始发送数据了。直播地址："+transRTMP.getRed5LiveStreamUrl());
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(15000);
 			} catch (Exception e) {
 				
 			}
@@ -121,5 +132,9 @@ public class TestFFmpeg {
 			System.out.println("启动失败了");
 		}
 		
+	}
+	
+	public static void main(String[] args) throws InterruptedException {
+		RtmpManager.getInstance();
 	}
 }

@@ -23,7 +23,7 @@
 	<root>
 		<priority value="info" />
 		<appender-ref ref="console" />
-		<appender-ref ref="FILE"/>
+		<!-- <appender-ref ref="FILE"/> -->
 	</root>
 	
 </log4j:configuration>

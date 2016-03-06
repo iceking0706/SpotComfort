@@ -123,6 +123,7 @@ body {
 			<option value="3">抓取相机I/O数据</option>
 			<option value="4">设置相机时钟</option>
 			<option value="5">实时照片抓拍</option>
+			<option value="6">实时视频直播</option>
 		</select>
 		<input type="button" value="下发" onClick="fnDownOper();">
 	</div>
