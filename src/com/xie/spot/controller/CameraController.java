@@ -45,6 +45,7 @@ import com.xie.spot.sys.utils.PageData;
 import com.xie.spot.sys.utils.PageParam;
 import com.xie.spot.sys.utils.ffmpeg.LiveStreamUser;
 import com.xie.spot.sys.utils.ffmpeg.RtmpManager;
+import com.xie.spot.sys.utils.ffmpeg.UserSN;
 
 /**
  * 和摄像头设备相关的操作
@@ -1076,6 +1077,7 @@ public class CameraController {
 	
 	/**
 	 * 视频直播流
+	 * http://localhost:8080/sc/cmr/livestream?sn=aa-bb-cc&oper=start&username=tmp&password=123456
 	 * @param request
 	 * @param sn
 	 * @return
@@ -1084,18 +1086,26 @@ public class CameraController {
 	@ResponseBody
 	@Transactional
 	public String livestream(HttpServletRequest request, String sn,String oper) {
-		//调用视频，必须要指定用户名和密码
-		User loginUser = (User) request.getSession().getAttribute("loginUser");
-		if (loginUser == null) {
-			//当缺少登入信息的时候，必须判断指定的用户名
-			if(!LiveStreamUser.isUserValid(request.getParameter("username"), request.getParameter("password"))){
-				return new JsonResult(false, "No auth info").toString();
-			}
-		}
 		
 		if (Utils.isEmpty(sn)) {
 			return new JsonResult(false, "No parameter sn").toString();
 		}
+		
+		//调用视频，必须要指定用户名和密码
+		User loginUser = (User) request.getSession().getAttribute("loginUser");
+		if (loginUser == null) {
+			//当缺少登入信息的时候，必须判断指定的用户名
+			UserSN userSN = LiveStreamUser.findUserBy(request.getParameter("username"), request.getParameter("password"));
+			if(userSN == null){
+				return new JsonResult(false, "No auth info").toString();
+			}
+			//判断sn是否属于管理范围的
+			if(!userSN.containsSN(sn)){
+				return new JsonResult(false, "User: "+userSN.getUser()+" has no right to reach sn: "+sn).toString();
+			}
+		}
+		
+		
 		boolean blStart = (oper!=null && oper.equals("start"));
 		
 		//知道相机配置对象，获得运行状态

@@ -1,0 +1,21 @@
+[
+{
+	"user":"admin",
+	"pass":"adminsuyou360",
+	"mark":"酥游科技的管理员",
+	"all":true
+},
+{
+	"user":"pfcounter",
+	"pass":"pfcounter123456",
+	"mark":"蒋涛软件对接使用的",
+	"all":true
+},
+{
+	"user":"tmp",
+	"pass":"tmp123456",
+	"mark":"临时对接的使用的",
+	"all":false,
+	"sns":["STCAM-236-LS15032987"]
+}
+]
