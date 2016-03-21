@@ -6,7 +6,7 @@ package com.xie.spot.pojo;
  * @author icekinglele
  *
  */
-class PjCmrSNInfoForShow {
+public class PjCmrSNInfoForShow {
 	public String sn;
 	public String name;
 	public int inSum;

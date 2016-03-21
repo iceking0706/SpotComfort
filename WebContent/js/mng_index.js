@@ -31,6 +31,13 @@ var fnLogin = function(){
 	});
 };
 
+var fnSelectShowSpot = function(){
+	var spotNo = parseInt($('#selectShowSpot').val());
+	if(spotNo == 0)
+		return;
+	window.open('showOne.jsp?no='+spotNo);
+};
+
 $(function(){
 	$('#txt_username').focus();
 	$('#txt_username').keypress(function(e){

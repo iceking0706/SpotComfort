@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div id="container"></div>
-	<input type="button" class="player-play" value="播放" />
+	<!-- <input type="button" class="player-play" value="播放" /> -->
 	<input type="button" class="player-stop" value="停止并关闭" />
 
 	<script type="text/javascript">
@@ -43,7 +43,7 @@
 			});
 
 			//播放 暂停  
-			$('.player-play').click(function() {
+			/* $('.player-play').click(function() {
 				if (thePlayer.getState() != 'PLAYING') {
 					thePlayer.play(true);
 					this.value = '暂停';
@@ -51,7 +51,7 @@
 					thePlayer.play(false);
 					this.value = '播放';
 				}
-			});
+			}); */
 
 			//停止  
 			$('.player-stop').click(function() {

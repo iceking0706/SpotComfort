@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
+<%@page import="com.xie.spot.pojo.spotshow.SpotsShowCfgByJson" %>
+<%@page import="com.xie.spot.pojo.spotshow.OneSpotCfg" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -35,8 +37,19 @@ body {
 		<td style="width:450px;" class="mark1">“出门旅游，先看看舒适度！”</td>
 		<td valign="bottom" align="right" class="mark2">
 		<!-- 各个景点的演示页面 -->
-		[<a href="show1.jsp" target="_blank">台州-神仙居</a>]
-		[<a href="show2.jsp" target="_blank">衢州-盛世莲花</a>]
+		[
+		<select id="selectShowSpot" onchange="fnSelectShowSpot();">
+			<option value="0" selected>--各景点演示--</option>
+			<%
+				for(int i=0;i<SpotsShowCfgByJson.getInstance().getSpotsCfg().length;i++){
+					OneSpotCfg oneSpotCfg = SpotsShowCfgByJson.getInstance().getSpotsCfg()[i];
+			%>
+			<option value="<%= oneSpotCfg.getSpotNo() %>"><%= oneSpotCfg.getSpotName() %></option>
+			<%
+				}
+			%>
+		</select>
+		]
 		</td>
 	</tr>
 </table>
