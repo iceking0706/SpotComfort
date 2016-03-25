@@ -74,6 +74,15 @@ public class OneSpotCfg {
 	private int sumIn=0;
 	private int sumOut=0;
 	
+	/**
+	 * 保存上次执行action的日期
+	 */
+	private String actionDate;
+	
+	public String preActionDate(){
+		return actionDate;
+	}
+	
 	
 	/**
 	 * 得到相机的in语句
@@ -89,7 +98,20 @@ public class OneSpotCfg {
 		return insql;
 	}
 	
+	/**
+	 * 统计当天的数据
+	 * @return
+	 */
 	public boolean action(){
+		return action(null);
+	}
+	
+	/**
+	 * 统计某一天的数据
+	 * @param date
+	 * @return
+	 */
+	public boolean action(String date){
 		try {
 			JDBC jdbc = JDBC.newOne();
 			jdbc.startConnection();
@@ -122,9 +144,9 @@ public class OneSpotCfg {
 			}
 			
 			//获得当天的时间点
-			String todayStr = DateProcess.toString(new Date(), "yyyy-MM-dd");
-			long timeStart = DateProcess.toDate(todayStr+" "+startTime, "yyyy-MM-dd HH:mm").getTime();
-			long timeEnd = DateProcess.toDate(todayStr+" "+endTime, "yyyy-MM-dd HH:mm").getTime();
+			actionDate = Utils.isEmpty(date)?DateProcess.toString(new Date(), "yyyy-MM-dd"):date;
+			long timeStart = DateProcess.toDate(actionDate+" "+startTime, "yyyy-MM-dd HH:mm").getTime();
+			long timeEnd = DateProcess.toDate(actionDate+" "+endTime, "yyyy-MM-dd HH:mm").getTime();
 			
 			//首先得到这些相机的根据sn汇总的数据
 			String sql = "select sn,sum(din),sum(dout) from TCameraData where (time between "+timeStart+" and "+timeEnd+") and sn in("+gnrSnInSql(allSn)+")";
@@ -151,8 +173,8 @@ public class OneSpotCfg {
 			rs.close();
 			
 			//统计出去的人不能比进入的人多
-			if(this.sumOut>this.sumIn)
-				this.sumOut=this.sumIn;
+//			if(this.sumOut>this.sumIn)
+//				this.sumOut=this.sumIn;
 			//找到sn最新的一张图片，缩略图
 			if(!mapSN.isEmpty()){
 				Iterator<String> iterator = mapSN.keySet().iterator();

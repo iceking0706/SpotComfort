@@ -221,9 +221,16 @@ public class CameraOperService {
 			sumIn += po.getDin().intValue();
 			sumOut += po.getDout().intValue();
 		}
+		
+		//计算留存数据
+		int sumStay = sumIn-sumOut;
+		if(sumStay<0)
+			sumStay = 0;
+		
 		JsonResult jsonResult = new JsonResult(true);
 		jsonResult.put("sumIn", sumIn);
 		jsonResult.put("sumOut", sumOut);
+		jsonResult.put("sumStay", sumStay);
 		jsonResult.put("date", date);
 		jsonResult.put("sn", sn);
 		

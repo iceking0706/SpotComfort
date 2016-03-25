@@ -34,6 +34,8 @@ import com.xie.spot.pojo.PjCmrData;
 import com.xie.spot.pojo.PjCmrDataInner;
 import com.xie.spot.pojo.PjOnedayLostMinute;
 import com.xie.spot.pojo.PjOnedayRawIOLostInfo;
+import com.xie.spot.pojo.spotshow.OneSpotCfg;
+import com.xie.spot.pojo.spotshow.SpotsShowCfgByJson;
 import com.xie.spot.repository.CameraAlertRepository;
 import com.xie.spot.repository.CameraCfgRepository;
 import com.xie.spot.repository.CameraDataRepository;
@@ -912,6 +914,30 @@ public class CameraController {
 	@ResponseBody
 	public String calcuOnedayInOut(HttpServletRequest request, String sn,String date) {
 		return cameraOperService.calcuOnedayInOut(sn, date).toString();
+	}
+	
+	@RequestMapping(value = "/calcuSpotInOut", produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String calcuSpotInOut(HttpServletRequest request, int spotNo,String date){
+		if(spotNo<=0){
+			return new JsonResult(false, "缺少必要参数. spotNo.").toString();
+		}
+		OneSpotCfg one = SpotsShowCfgByJson.getInstance().getOneByNo(spotNo);
+		if(one == null){
+			return new JsonResult(false, "无法找到风景点. spotNo="+spotNo).toString();
+		}
+		if(!one.action(date)){
+			return new JsonResult(false, "统计数据失败. spotNo="+spotNo+", date="+date).toString();
+		}
+		JsonResult jsonResult = new JsonResult(true);
+		jsonResult.put("sumIn", one.sumIn());
+		jsonResult.put("sumOut", one.sumOut());
+		jsonResult.put("sumStay", one.sumStay());
+		jsonResult.put("date", one.preActionDate());
+		jsonResult.put("spotNo", one.getSpotNo());
+		jsonResult.put("spotName", one.getSpotName());
+		
+		return jsonResult.toString();
 	}
 	
 	/**
