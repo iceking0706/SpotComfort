@@ -148,6 +148,10 @@ public class OneSpotCfg {
 			long timeStart = DateProcess.toDate(actionDate+" "+startTime, "yyyy-MM-dd HH:mm").getTime();
 			long timeEnd = DateProcess.toDate(actionDate+" "+endTime, "yyyy-MM-dd HH:mm").getTime();
 			
+			//汇总数据，每次都需要清零
+			this.sumIn = 0;
+			this.sumOut = 0;
+			
 			//首先得到这些相机的根据sn汇总的数据
 			String sql = "select sn,sum(din),sum(dout) from TCameraData where (time between "+timeStart+" and "+timeEnd+") and sn in("+gnrSnInSql(allSn)+")";
 			sql += " group by sn";
