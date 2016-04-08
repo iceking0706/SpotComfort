@@ -118,7 +118,7 @@ body {
 	        <td align="center"><a href="<%= bean.cmrPicOri(sn1) %>" target="_blank"><img src="<%= bean.cmrPicUrl(sn1) %>" width="240" height="135" /></a></td>
 	      </tr>
 	      <tr>
-	        <td align="center"><%= bean.cmrName(sn1) %></td>
+	        <td align="center"><%= bean.cmrName(sn1) %> 【<a href="#" onclick="fnLiveStream('<%= sn1 %>');">播放</a>】</td>
 	      </tr>
 	      <tr>
 	        <td align="center">累计进入：<%= bean.cmrSumIn(sn1) %>人次</td>

@@ -85,7 +85,7 @@ public class TransRTMP extends Thread {
 	 * 设置本次直播的超时时间，默认是5分钟
 	 * 0表示不超时的
 	 */
-	private long timeout = 300000l;
+	private long timeout = 180000l;
 	
 	/**
 	 * 分辨率，默认960*540
@@ -310,8 +310,6 @@ public class TransRTMP extends Thread {
 	public void setOutputStreamName(String outputStreamName) {
 		this.outputStreamName = outputStreamName;
 	}
-
-	
 
 	public long getTimeout() {
 		return timeout;

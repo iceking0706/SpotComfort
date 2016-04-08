@@ -1,3 +1,22 @@
+//启动视频直播
+var fnLiveStream = function(sn){
+	$.messager.confirm('Confirm','确实要直播相机视频吗？SN='+sn,function(r){
+		if(!r)
+			return;
+		$.messager.progress({msg:'正在建立直播连接...'});
+		$.post('cmr/livestream',{sn:sn,oper:'start',username:'admin',password:'adminsuyou360'},function(data){
+			$.messager.progress('close');
+			if(data.succ){
+				//alert(data.rtmpurl+' , '+data.pic);
+				//直接弹出一个播放视频的小窗口
+				var pageurl = 'mng_camera_livestream.jsp?sn='+data.sn+'&rtmpurl='+data.rtmpurl+'&picurl='+data.pic;
+				window.open(pageurl,'','height=600,width=1000,top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no, alwaysRaised=yes');
+			}else
+				$.messager.alert('Information','失败：'+data.stmt);
+		});
+	});
+};
+
 //刷新数据，每个1分钟自动刷新一次
 var refresh = function(){
 	location.reload(true);

@@ -180,7 +180,7 @@ public class RtmpManager {
 		threadPool.execute(transRTMP);
 		
 		//3G路由器中的连接时间比较长，设置为30秒
-		if(transRTMP.isInTrans(30000)){
+		if(transRTMP.isInTrans(20000)){
 			//如果正在直播中了，那么就加入到map，否则返回null
 			mapLive.put(uuid, transRTMP);
 			logger.info("Add new livestream: "+transRTMP.getRed5LiveStreamUrl()+". MapSize="+mapLive.size());

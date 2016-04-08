@@ -1117,22 +1117,24 @@ public class CameraController {
 			return new JsonResult(false, "No parameter sn").toString();
 		}
 		
+		boolean blStart = (oper!=null && oper.equals("start"));
+		
 		//调用视频，必须要指定用户名和密码
-		User loginUser = (User) request.getSession().getAttribute("loginUser");
-		if (loginUser == null) {
-			//当缺少登入信息的时候，必须判断指定的用户名
-			UserSN userSN = LiveStreamUser.findUserBy(request.getParameter("username"), request.getParameter("password"));
-			if(userSN == null){
-				return new JsonResult(false, "No auth info").toString();
-			}
-			//判断sn是否属于管理范围的
-			if(!userSN.containsSN(sn)){
-				return new JsonResult(false, "User: "+userSN.getUser()+" has no right to reach sn: "+sn).toString();
+		if(blStart){
+			User loginUser = (User) request.getSession().getAttribute("loginUser");
+			if (loginUser == null) {
+				//当缺少登入信息的时候，必须判断指定的用户名
+				UserSN userSN = LiveStreamUser.findUserBy(request.getParameter("username"), request.getParameter("password"));
+				if(userSN == null){
+					return new JsonResult(false, "No auth info").toString();
+				}
+				//判断sn是否属于管理范围的
+				if(!userSN.containsSN(sn)){
+					return new JsonResult(false, "User: "+userSN.getUser()+" has no right to reach sn: "+sn).toString();
+				}
 			}
 		}
 		
-		
-		boolean blStart = (oper!=null && oper.equals("start"));
 		
 		//知道相机配置对象，获得运行状态
 		CameraCfg cameraCfg = cameraCfgRepository.findBySn(sn);
