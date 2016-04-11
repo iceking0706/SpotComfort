@@ -918,8 +918,8 @@ public class CameraController {
 	
 	@RequestMapping(value = "/calcuSpotInOut", produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String calcuSpotInOut(HttpServletRequest request, int spotNo,String date){
-		if(spotNo<=0){
+	public String calcuSpotInOut(HttpServletRequest request, Integer spotNo,String date){
+		if(spotNo==null || spotNo.intValue()<=0){
 			return new JsonResult(false, "缺少必要参数. spotNo.").toString();
 		}
 		OneSpotCfg one = SpotsShowCfgByJson.getInstance().getOneByNo(spotNo);
@@ -938,6 +938,22 @@ public class CameraController {
 		jsonResult.put("spotName", one.getSpotName());
 		
 		return jsonResult.toString();
+	}
+	
+	@RequestMapping(value = "/calcuSpotByHour", produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String calcuSpotByHour(HttpServletRequest request, Integer spotNo,String date,Integer hourS,Integer hourE){
+		if(spotNo==null || spotNo.intValue()<=0){
+			return new JsonResult(false, "缺少必要参数. spotNo.").toString();
+		}
+		OneSpotCfg one = SpotsShowCfgByJson.getInstance().getOneByNo(spotNo);
+		if(one == null){
+			return new JsonResult(false, "无法找到风景点. spotNo="+spotNo).toString();
+		}
+		int hs = hourS!=null?hourS.intValue():0;
+		int he = hourE!=null?hourE.intValue():0;
+		
+		return one.calcuByHour(date, hs, he);
 	}
 	
 	/**

@@ -10,6 +10,8 @@ import com.xie.spot.pojo.PjCmrSNInfoForShow;
 import com.xie.spot.sys.Utils;
 import com.xie.spot.sys.utils.JDBC;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import ssin.util.DateProcess;
 import ssin.util.MyStringUtil;
 
@@ -207,6 +209,114 @@ public class OneSpotCfg {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	/**
+	 * 统计该景点某天，按小时整点返回数据
+	 * 直接返回json格式的
+	 * @return
+	 */
+	public String calcuByHour(String date,int hourS,int hourE){
+		//现在的时间，用于统计的
+		long timeNow11 = System.currentTimeMillis();
+		Date nowTime = new Date(timeNow11);
+		
+		//日期的0点时间，默认是今天的0点的
+		String curDate = DateProcess.toString(nowTime, "yyyy-MM-dd");
+		long curDateTime0 = DateProcess.toDate(curDate , "yyyy-MM-dd").getTime();
+		//判断是否是今天的，默认是true
+		boolean isToday = true;
+		if(!Utils.isEmpty(date)){
+			Date tmpDate = DateProcess.toDate(date, "yyyy-MM-dd");
+			if(tmpDate != null && tmpDate.getTime()!=curDateTime0){
+				//传入的日期不正确，就使用今天的日期
+				isToday = false;
+				curDate = DateProcess.toString(tmpDate, "yyyy-MM-dd");
+				curDateTime0 = tmpDate.getTime();
+			}
+		}
+		//开始小时，默认是8
+		int startHour = 8;
+		if(hourS>=8 && hourS<=18)
+			startHour = hourS;
+		//结束时间，默认是18
+		int endHour = 18;
+		if(hourE>startHour && hourE<=18)
+			endHour = hourE;
+		
+		JSONObject obj = new JSONObject();
+		obj.put("succ", true);
+		obj.put("date", curDate);
+		obj.put("spotNo", getSpotNo());
+		obj.put("spotName", getSpotName());
+		
+		JSONArray results = new JSONArray();
+		try {
+			JDBC jdbc = JDBC.newOne();
+			jdbc.startConnection();
+			for(int i=startHour;i<=endHour;i++){
+				String startStr = null;
+				String endStr = null;
+				long timeStart = 0;
+				long timeEnd = 0;
+				int preH = i-1;
+				if(i==startHour){
+					//第一个时间，
+					startStr = curDate+" 00:00:00";
+					timeStart = DateProcess.toDate(startStr, "yyyy-MM-dd HH:mm:ss").getTime();
+					endStr = curDate+" "+(preH<10?"0"+preH:preH)+":59:59";
+					timeEnd = DateProcess.toDate(endStr, "yyyy-MM-dd HH:mm:ss").getTime();
+				}else{
+					//最后一个时间
+					startStr = curDate+" "+(preH<10?"0"+preH:preH)+":00:00";
+					timeStart = DateProcess.toDate(startStr, "yyyy-MM-dd HH:mm:ss").getTime();
+					endStr = curDate+" "+(preH<10?"0"+preH:preH)+":59:59";
+					timeEnd = DateProcess.toDate(endStr, "yyyy-MM-dd HH:mm:ss").getTime();
+				}
+				
+				//如果是今天，并且结束时间超过现在的时间了，那么就跳出循环了
+				//System.out.println(isToday+" , "+timeStart+" , "+timeNow11+", <"+(timeStart>timeNow11));
+				if(isToday && timeStart>timeNow11)
+					break;
+				
+				String sql = "select sn,sum(din),sum(dout) from TCameraData where (time between "+timeStart+" and "+timeEnd+") and sn in("+gnrSnInSql(allSn)+")";
+				sql += " group by sn";
+				//System.out.println(sql);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("hour", i);
+				int in = 0;
+				int out = 0;
+				ResultSet rs = jdbc.executeQuery(sql);
+				while(rs.next()){
+					String sn = rs.getString(1);
+					int sumdin = rs.getInt(2);
+					int sumdout = rs.getInt(3);
+					
+					//统计进出口的求和
+					if(MyStringUtil.isInArray(inSn, sn)){
+						in = in + sumdin;
+					}
+					if(MyStringUtil.isInArray(outSn, sn)){
+						out = out + sumdout;
+					}
+				}
+				rs.close();
+				
+				//System.out.println("汇总："+startStr+" ~ "+endStr+", in="+in+", out="+out);
+				
+				jsonObject.put("in", in);
+				jsonObject.put("out", out);
+				
+				results.add(jsonObject);
+			}
+			jdbc.stopConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		obj.put("results", results);
+		
+		return obj.toString();
 	}
 	
 	/**
