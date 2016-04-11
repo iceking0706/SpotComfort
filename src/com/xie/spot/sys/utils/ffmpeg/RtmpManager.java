@@ -158,7 +158,7 @@ public class RtmpManager {
 	 * @param inputRTSP
 	 * @return
 	 */
-	public String runRTSP(final String uuid,String inputRTSP){
+	public String runRTSP(final String uuid,String inputRTSP,boolean isHls){
 		if(ffmpegExe==null || !ffmpegExe.exists())
 			return null;
 		
@@ -169,7 +169,7 @@ public class RtmpManager {
 			return transRTMP.getRed5LiveStreamUrl();
 		}
 		//新建立一个直播对象
-		transRTMP = new TransRTMP(ffmpegExe, inputRTSP, uuid);
+		transRTMP = new TransRTMP(ffmpegExe, inputRTSP, uuid,isHls);
 		transRTMP.setShowLineInfo(new ShowLineInfo() {
 			
 			@Override
@@ -207,7 +207,7 @@ public class RtmpManager {
 			return transRTMP.getRed5LiveStreamUrl();
 		}
 		//新建立一个直播对象
-		transRTMP = new TransRTMP(ffmpegExe, mp4Path, uuid);
+		transRTMP = new TransRTMP(ffmpegExe, mp4Path, uuid,false);
 		transRTMP.setMp4File(true);
 		threadPool.execute(transRTMP);
 		

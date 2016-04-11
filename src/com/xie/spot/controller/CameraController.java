@@ -1167,7 +1167,16 @@ public class CameraController {
 			//根据当前的ip和端口组织 rtsp url
 			String rtsp = "rtsp://"+cameraCfg.getIp()+":554/h264ESVideoTest";
 			//调用ffmeg启动直播流
-			String rtmp = RtmpManager.getInstance().runRTSP(sn, rtsp);
+			//需要判断是否是hls格式的
+			boolean isHls = false;
+			if(request.getParameter("hls")!=null){
+				try {
+					isHls = Boolean.parseBoolean(request.getParameter("hls"));
+				} catch (Exception e) {
+					isHls = false;
+				}
+			}
+			String rtmp = RtmpManager.getInstance().runRTSP(sn, rtsp,isHls);
 			if(rtmp == null){
 				return new JsonResult(false, "Camera not establish livestram from: "+rtsp).toString();
 			}

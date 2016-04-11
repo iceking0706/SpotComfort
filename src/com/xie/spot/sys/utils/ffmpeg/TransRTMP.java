@@ -42,12 +42,25 @@ public class TransRTMP extends Thread {
 	/**
 	 * red5服务器的ip和端口号
 	 * 启动之前，设置过来
+	 * 
+	 * 现在用的是nginx的服务
 	 */
-	private static String red5Ip = "127.0.0.1";
+	public static String red5Ip = "127.0.0.1";
 	
-	private static int red5Port = 1935;
+	public static int rtmpPort = 1935;
 	
-	private static String appName = "live";
+	public static int hlsPort = 8989;
+	
+	public static String rtmpAppName = "live";
+	
+	public static String hlsAppName = "hls";
+	
+	
+	/**
+	 * 判断是否是hls流
+	 * 默认false，就是直接rtmp的流
+	 */
+	private boolean hls = false;
 
 	/**
 	 * 处理的线程，命令窗口
@@ -107,12 +120,29 @@ public class TransRTMP extends Thread {
 	 * @param inputRTSP
 	 * @param outputRTMP
 	 */
-	public TransRTMP(File ffmpegExe, String inputRTSP, String outputStreamName) {
+	public TransRTMP(File ffmpegExe, String inputRTSP, String outputStreamName,boolean isHls) {
 		this.ffmpegExe = ffmpegExe;
 		this.inputRTSP = inputRTSP;
 		this.outputStreamName = outputStreamName;
 		this.resultList = new ArrayList<String>();
 		this.frameCount = 0;
+		this.hls = isHls;
+	}
+	
+	/**
+	 * 判断直播名字，live或hls
+	 * @return
+	 */
+	private String getAppName(){
+		return hls?hlsAppName:rtmpAppName;
+	}
+	
+	/**
+	 * 获得不同的类型
+	 * @return
+	 */
+	private int getPort(){
+		return hls?hlsPort:rtmpPort;
 	}
 	
 	/**
@@ -140,8 +170,8 @@ public class TransRTMP extends Thread {
 		cmd.add(ratioWidth+"x"+ratioHeight);
 		cmd.add("-an");
 		//传输的地址，肯定是本地的，nginx
-		cmd.add("\"rtmp://127.0.0.1:"+red5Port+"/"+appName+"/"+outputStreamName+"\"");
-		//cmd.add("\""+getRed5LiveStreamUrl()+"\"");
+		//用ffmpeg推流都是推成rtmp流的
+		cmd.add("\"rtmp://127.0.0.1:"+rtmpPort+"/"+getAppName()+"/"+outputStreamName+"\"");
 		return cmd;
 	}
 
@@ -163,7 +193,7 @@ public class TransRTMP extends Thread {
 		cmd.add("-f");
 		cmd.add("flv");
 		cmd.add("-y");
-		cmd.add("rtmp://"+red5Ip+":"+red5Port+"/"+appName+"/"+outputStreamName);
+		cmd.add("rtmp://"+red5Ip+":"+rtmpPort+"/"+getAppName()+"/"+outputStreamName);
 		return cmd;
 	}
 
@@ -224,11 +254,11 @@ public class TransRTMP extends Thread {
 	 * @return
 	 */
 	public String getRed5LiveStreamUrl(){
-		/*if(red5Port == 1935)
-			return "rtmp://"+red5Ip+"/"+appName+"/"+outputStreamName;
-		else
-			return "rtmp://"+red5Ip+":"+red5Port+"/"+appName+"/"+outputStreamName; */
-		return "rtmp://"+red5Ip+":"+red5Port+"/"+appName+"/"+outputStreamName;
+		if(!hls){
+			return "rtmp://"+red5Ip+":"+rtmpPort+"/"+rtmpAppName+"/"+outputStreamName;
+		}else {
+			return "http://"+red5Ip+":"+hlsPort+"/"+hlsAppName+"/"+outputStreamName+".m3u8";
+		}
 	}
 	
 	/**
@@ -383,19 +413,12 @@ public class TransRTMP extends Thread {
 		TransRTMP.red5Ip = red5Ip;
 	}
 
-	public static int getRed5Port() {
-		return red5Port;
+	public boolean isHls() {
+		return hls;
 	}
 
-	public static void setRed5Port(int red5Port) {
-		TransRTMP.red5Port = red5Port;
+	public void setHls(boolean hls) {
+		this.hls = hls;
 	}
-
-	public static String getAppName() {
-		return appName;
-	}
-
-	public static void setAppName(String appName) {
-		TransRTMP.appName = appName;
-	}
+	
 }
