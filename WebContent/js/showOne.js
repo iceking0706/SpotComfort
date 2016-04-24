@@ -4,7 +4,8 @@ var fnLiveStream = function(sn){
 		if(!r)
 			return;
 		$.messager.progress({msg:'正在建立直播连接...'});
-		$.post('cmr/livestream',{sn:sn,oper:'start',username:'admin',password:'adminsuyou360'},function(data){
+		//这个界面，默认是hls方式打开的，弹出video的播放器控件
+		$.post('cmr/livestream',{sn:sn,oper:'start',username:'admin',password:'adminsuyou360',hls:false},function(data){
 			$.messager.progress('close');
 			if(data.succ){
 				//alert(data.rtmpurl+' , '+data.pic);

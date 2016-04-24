@@ -198,7 +198,7 @@ public class TransRTMP extends Thread {
 	}
 
 	public boolean isTransing() {
-		return start && frameCount > 3;
+		return start && frameCount > 8;
 	}
 	
 	private void sleepIt(long mm){
