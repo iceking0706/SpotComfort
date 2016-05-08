@@ -37,6 +37,17 @@
 			liveSn:["STCAM-236-LS15033279","STCAM-236-LS15032898"],
 			startTime:"08:00",
 			endTime:"18:15"
+		},
+		{
+			spotNo:3,
+			spotName:"南京旅游基地演示",
+			spotMark:"",
+			allSn:["STCAM-236-LS15042323"],
+			inSn:["STCAM-236-LS15042323"],
+			outSn:["STCAM-236-LS15042323"],
+			liveSn:["STCAM-236-LS15042323"],
+			startTime:"08:00",
+			endTime:"18:15"
 		}
 	]
 }

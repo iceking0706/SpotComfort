@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.xie.spot.entity.CameraSpotDHInOut;
 import com.xie.spot.pojo.PjCmrSNInfoForShow;
 import com.xie.spot.sys.Utils;
 import com.xie.spot.sys.utils.JDBC;
@@ -220,6 +221,7 @@ public class OneSpotCfg {
 		//现在的时间，用于统计的
 		long timeNow11 = System.currentTimeMillis();
 		Date nowTime = new Date(timeNow11);
+		int nowHour = nowTime.getHours();
 		
 		//日期的0点时间，默认是今天的0点的
 		String curDate = DateProcess.toString(nowTime, "yyyy-MM-dd");
@@ -243,6 +245,10 @@ public class OneSpotCfg {
 		int endHour = 18;
 		if(hourE>startHour && hourE<=18)
 			endHour = hourE;
+		//如果是今天，结束时间，不能超过现在的小时
+		if(isToday && endHour>nowHour){
+			endHour = nowHour;
+		}
 		
 		JSONObject obj = new JSONObject();
 		obj.put("succ", true);
@@ -279,33 +285,74 @@ public class OneSpotCfg {
 				if(isToday && timeStart>timeNow11)
 					break;
 				
-				String sql = "select sn,sum(din),sum(dout) from TCameraData where (time between "+timeStart+" and "+timeEnd+") and sn in("+gnrSnInSql(allSn)+")";
-				sql += " group by sn";
-				//System.out.println(sql);
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("hour", i);
-				int in = 0;
-				int out = 0;
-				ResultSet rs = jdbc.executeQuery(sql);
-				while(rs.next()){
-					String sn = rs.getString(1);
-					int sumdin = rs.getInt(2);
-					int sumdout = rs.getInt(3);
-					
-					//统计进出口的求和
-					if(MyStringUtil.isInArray(inSn, sn)){
-						in = in + sumdin;
-					}
-					if(MyStringUtil.isInArray(outSn, sn)){
-						out = out + sumdout;
-					}
+				
+				//先根据小时去统计后的表TCameraSpotDHInOut中获取，
+				//没有的情况下，再去原始数据中统计
+				CameraSpotDHInOut dhInOut = null;
+				String sql = "";
+				
+				sql = "select id,din,dout from TCameraSpotDHInOut where spotNo="+getSpotNo();
+				sql += " and ddate='"+curDate+"'";
+				sql += " and dhour="+i;
+				ResultSet rsinout = jdbc.executeQuery(sql);
+				if(rsinout.next()){
+					dhInOut = new CameraSpotDHInOut();
+					dhInOut.setId(rsinout.getLong("id"));
+					dhInOut.setSpotNo(getSpotNo());
+					dhInOut.setDate(curDate);
+					dhInOut.setHour(i);
+					dhInOut.setIn(rsinout.getInt("din"));
+					dhInOut.setOut(rsinout.getInt("dout"));
 				}
-				rs.close();
+				rsinout.close();
+				
+				//没有汇总后的数据，再查询原始数据，并插入到统计表中
+				if(dhInOut == null){
+					sql = "select sn,sum(din),sum(dout) from TCameraData where (time between "+timeStart+" and "+timeEnd+") and sn in("+gnrSnInSql(allSn)+")";
+					sql += " group by sn";
+					
+					int in = 0;
+					int out = 0;
+					ResultSet rs = jdbc.executeQuery(sql);
+					while(rs.next()){
+						String sn = rs.getString(1);
+						int sumdin = rs.getInt(2);
+						int sumdout = rs.getInt(3);
+						
+						//统计进出口的求和
+						if(MyStringUtil.isInArray(inSn, sn)){
+							in = in + sumdin;
+						}
+						if(MyStringUtil.isInArray(outSn, sn)){
+							out = out + sumdout;
+						}
+					}
+					rs.close();
+					
+					//构造
+					dhInOut = new CameraSpotDHInOut();
+					dhInOut.setSpotNo(getSpotNo());
+					dhInOut.setDate(curDate);
+					dhInOut.setHour(i);
+					dhInOut.setIn(in);
+					dhInOut.setOut(out);
+					
+					//插入数据库，如果是最后一个小时，不需要插入的
+					if(i<endHour){
+						sql = "insert into TCameraSpotDHInOut(spotNo,ddate,dhour,din,dout)";
+						sql += " values("+getSpotNo()+",'"+curDate+"',"+i+","+in+","+out+")";
+						
+						jdbc.executeUpdate(sql);
+					}
+					
+				}
 				
 				//System.out.println("汇总："+startStr+" ~ "+endStr+", in="+in+", out="+out);
 				
-				jsonObject.put("in", in);
-				jsonObject.put("out", out);
+				jsonObject.put("in", dhInOut.getIn());
+				jsonObject.put("out", dhInOut.getOut());
 				
 				results.add(jsonObject);
 			}
